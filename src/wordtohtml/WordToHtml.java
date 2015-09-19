@@ -14,8 +14,10 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -33,7 +35,7 @@ public class WordToHtml {
         this.docFile = docFile;
     }
 
-    public void convert(File file) {
+    public boolean convert(File file) throws IOException, TransformerException, ParserConfigurationException {
         this.file = file;
 
         try {
@@ -65,25 +67,26 @@ public class WordToHtml {
                 out.write(html);
                 out.close();
             } catch (IOException e) {
-                System.out.println("0");
+                throw new IOException(e);
             }
 
-        } catch (Exception e) {
-            System.out.println("0");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e);
         }
+        
+        return true;
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         try {
             WordToHtml wordtohtml = new WordToHtml(new File(args[0]));
-            wordtohtml.convert(wordtohtml.docFile);
-            
+            if(wordtohtml.convert(wordtohtml.docFile))
+                System.out.println("success");
+            else
+                System.out.println("error");
         } catch (Exception e) {
-            System.out.println("0");
-        } finally {
-            System.out.println("1");
-        }
-
+            throw new Exception(e);
+        } 
        
     }
 }
